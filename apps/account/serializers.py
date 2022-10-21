@@ -116,7 +116,7 @@ class ResetPasswordSerializer(serializers.Serializer):
             )
         return code
 
-    def validate(Self, attrs):
+    def validate(self, attrs):
         new_password = attrs.get('new_password')
         new_password_confirm = attrs.get('new_password_confirm')
         if new_password != new_password_confirm:

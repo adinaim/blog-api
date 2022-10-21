@@ -26,7 +26,7 @@ class RegistrationView(APIView):
                 'Thanks for registration. Activate your account via link in your email.',
                 status=status.HTTP_201_CREATED
                 )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) # я добавила, они забыли
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) # я добавила, они забыли, не нужно?
 
 class AccountActivationView(APIView):
     def get(self, request, activation_code):
