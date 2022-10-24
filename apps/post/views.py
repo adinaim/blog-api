@@ -16,9 +16,10 @@ from .models import (
     )
 
 from .serializers import (
-    PostListSerailizer, 
+    PostListSerializer, 
     PostSerializer, 
-    CommentSerializer
+    CommentSerializer,
+    PostCreateSerializer
     )
 
 from .permissions import IsOwner
@@ -27,26 +28,34 @@ from .permissions import IsOwner
 # class PostListView(ListAPIView):
 #     # queryset = Post.objects.filter(status='open')
 #     queryset = Post.objects.all()
-#     serializer_class = PostListSerailizer
+#     serializer_class = PostListSerializer
 
 class PostViewSet(ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
     def get_serializer_class(self):
         if self.action == 'list':
-            return PostListSerailizer
-        return super().get_serializer_class()
+            return PostListSerializer
+        elif self.action == 'create':
+            return PostCreateSerializer
+        return super().get_serializer_class() # вызывает дефолтный сериалайзер
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
-            return AllowAny
+            self.permission_classes = [AllowAny]
         elif self.action == 'create':
-            return IsAuthenticated
+            self.permission_classes = [IsAuthenticated]
         elif self.action in ['destroy', 'update', 'partial_update']:
-            return IsOwner
-        return super().get_permissions()
+            self.permission_classes = [IsOwner]
+        return super().get_permissions() # зачем давать доступ ко всему, если других действий не предусмотрено, там в рууте лежит AllowAny
+
+
 # комменты как подключаются
+# где указывается действие - кнопкам присваивается значение для запроса?
 
 """
 actions
@@ -58,3 +67,12 @@ destroy() - DELETE /post/1/
 partial_update - PATCH /post/1
 update() - PUT /post/1
 """
+
+# TODO: создание комментариев
+# TODO: отображение комментов в постах
+# TODO: создание лайков
+# TODO: отображение лайков в постах
+# TODO: создать модель рейтингов
+# TODO: создание рейтинга и отображение в постах
+
+# поискать баги

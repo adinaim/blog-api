@@ -17,7 +17,7 @@ from .serializers import (
 User = get_user_model()
 
 class RegistrationView(APIView):
-    @swagger_auto_schema(request_body=UserRegistrationSerializer) # документация
+    @swagger_auto_schema(request_body=UserRegistrationSerializer) # документация, что имела ввиду
     def post(self, request: Request):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -26,10 +26,9 @@ class RegistrationView(APIView):
                 'Thanks for registration. Activate your account via link in your email.',
                 status=status.HTTP_201_CREATED
                 )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) # я добавила, они забыли, не нужно?
 
 class AccountActivationView(APIView):
-    def get(self, request, activation_code):
+    def get(self, request, activation_code): # зачем request, в методах APIView многие методы с реквестом, но он не используется, прочитать, почему
         user = User.objects.filter(activation_code=activation_code).first()
         if not user:
             return Response(
@@ -57,7 +56,6 @@ class PasswordChangeView(APIView):
             )
 
 class RestorePasswordView(APIView):
-
     def post(self, request: Request):
         serializer = RestorePasswordSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -80,14 +78,10 @@ class ResetPasswordView(APIView):
 class DeleteAccountView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def delete(self, request: Request):
+    def destroy(self, request: Request):
         username = request.user.username
         User.objects.get(username=username).delete()
         return Response(
             'Your account has been deleted.',
             status=status.HTTP_204_NO_CONTENT
         )
-
-
-
-

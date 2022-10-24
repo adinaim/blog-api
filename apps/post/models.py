@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from slugify import slugify
 
+from .utils import get_time
+
+
 User = get_user_model()
 
 class Post(models.Model):
@@ -39,7 +42,7 @@ class Post(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.title) # + str(self.created_at)
+            self.slug = slugify(self.title + get_time())
         return super().save(*args, **kwargs)
 
     class Meta:
@@ -93,3 +96,5 @@ class Comment(models.Model):
 # посмотреть все видео по джанго, сделать конспекты
 # сравнить проекты, которые мы уже написали
 # разобраться с celery и redis
+# выписать все импорты по разным библиотекам и дать краткое описание
+# прочитать про routers
